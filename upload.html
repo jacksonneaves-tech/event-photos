@@ -46,7 +46,8 @@
 
       for (const f of files) form.append("photos", f);
 
-      const res = await fetch("YOUR_WORKER_URL/upload", {
+      const res = await fetch("https://super-base-a55bevent-photo-uploader.jackson-neaves.workers.dev
+/upload", {
         method: "POST",
         body: form
       });
