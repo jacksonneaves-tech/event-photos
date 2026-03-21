@@ -68,7 +68,13 @@
   const status = document.getElementById("status");
 
   if (files.length === 0) return alert("Select at least one photo");
-  if (files.length > 20) return alert("Max 20 photos");
+  const uploader = localStorage.getItem("uploaderName");
+const isHarryStyles = uploader === "harry-styles";
+
+if (!isHarryStyles && files.length > 20) {
+  return alert("Max 20 photos");
+}
+
 
   // Show uploading message immediately
   status.textContent = "Uploading photos, please wait...";
