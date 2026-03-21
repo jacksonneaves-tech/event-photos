@@ -10,7 +10,7 @@ body {
   display: flex;
   align-items: flex-end;     /* moves card lower */
   justify-content: center;
-  padding-bottom: 200px;      /* controls how low the card sits */
+  padding-bottom: 500px;      /* controls how low the card sits */
 }
 
 
