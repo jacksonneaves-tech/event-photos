@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <title>Gallery</title>
+
+  <style>
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .grid img {
+      width: 100%;
+      border-radius: 12px;
+      cursor: pointer;
+      object-fit: cover;
+    }
+
+    .full {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .full img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+
+<body style="background-image: url('bg-home.png');">
+
+  <div class="card">
+    <h1>Gallery</h1>
+    <h2>Photos uploaded so far</h2>
+
+    <div id="gallery" class="grid"></div>
+
+    <button onclick="downloadAll()">Download all images</button>
+  </div>
+
+  <div id="fullView" class="full" style="display:none;" onclick="this.style.display='none'">
+    <img id="fullImg">
+  </div>
+
+  <script>
+    const uploader = localStorage.getItem("uploaderName");
+
+    async function loadImages() {
+      const res = await fetch("https://super-base-a55bevent-photo-uploader.jackson-neaves.workers.dev/list");
+      const files = await res.json();
+
+      const gallery = document.getElementById("gallery");
+
+      files.forEach(file => {
+        const img = document.createElement("img");
+        img.src = file.url;
+        img.onclick = () => openFull(file.url);
+        gallery.appendChild(img);
+      });
+    }
+
+    function openFull(url) {
+      document.getElementById("fullImg").src = url;
+      document.getElementById("fullView").style.display = "flex";
+    }
+
+    async function downloadAll() {
+      window.location.href = "https://super-base-a55bevent-photo-uploader.jackson-neaves.workers.dev/download-all";
+    }
+
+    loadImages();
+  </script>
+
+</body>
+</html>
