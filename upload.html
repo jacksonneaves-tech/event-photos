@@ -64,23 +64,29 @@
     });
 
     async function upload() {
-      const files = photosInput.files;
-      if (files.length === 0) return alert("Select at least one photo");
-      if (files.length > 20) return alert("Max 20 photos");
+  const files = document.getElementById("photos").files;
+  const status = document.getElementById("status");
 
-      const form = new FormData();
-      form.append("name", name + "_" + cat);
+  if (files.length === 0) return alert("Select at least one photo");
+  if (files.length > 20) return alert("Max 20 photos");
 
-      for (const f of files) form.append("photos", f);
+  // Show uploading message immediately
+  status.textContent = "Uploading photos, please wait...";
 
-      const res = await fetch("https://super-base-a55bevent-photo-uploader.jackson-neaves.workers.dev/upload", {
-        method: "POST",
-        body: form
-      });
+  const form = new FormData();
+  form.append("name", name + "_" + cat);
 
-      document.getElementById("status").textContent =
-        res.ok ? "Upload complete!" : "Upload failed";
-    }
+  for (const f of files) form.append("photos", f);
+
+  const res = await fetch("https://super-base-a55bevent-photo-uploader.jackson-neaves.workers.dev/upload", {
+    method: "POST",
+    body: form
+  });
+
+  // Replace message when done
+  status.textContent = res.ok ? "Upload complete!" : "Upload failed";
+}
+
   </script>
 
 </body>
