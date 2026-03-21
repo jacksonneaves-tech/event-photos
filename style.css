@@ -84,7 +84,7 @@ input[type="file"] {
 .file-picker {
   position: relative;
   display: block;
-  width: 100%;
+  width: calc(100% - 4px); /* prevents overflow */
   padding: 14px;
   margin-top: 16px;
   border-radius: 12px;
@@ -98,7 +98,9 @@ input[type="file"] {
   cursor: pointer;
   transition: 0.2s ease;
   border: 1px solid rgba(255,255,255,0.3);
+  box-sizing: border-box; /* ensures padding stays inside width */
 }
+
 
 .file-picker:hover {
   background: rgba(255,255,255,0.35);
