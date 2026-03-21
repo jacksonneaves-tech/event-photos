@@ -5,16 +5,16 @@ body {
   font-family: 'Inter', sans-serif;
   color: #000;
   background-size: cover;
-  background-position: center;
+  background-position: top center;   /* updated */
   background-repeat: no-repeat;
   min-height: 100vh;
 
-  /* Position card between middle + bottom */
   display: flex;
-  align-items: center;        /* centers vertically */
+  align-items: center;
   justify-content: center;
-  padding-top: 200px;         /* pushes card DOWN */
-  padding-bottom: 5px;       /* prevents it from touching bottom */
+
+  padding-top: 240px;                /* updated */
+  padding-bottom: 5px;
 }
 
 /* Glass card */
