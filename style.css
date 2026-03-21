@@ -113,3 +113,23 @@ input[type="file"] {
   font-size: 0.9rem;
 }
 
+/* Name input field */
+.text-input {
+  width: calc(100% - 4px); /* prevents overflow */
+  padding: 14px;
+  margin-top: 16px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 500;
+  border: 1px solid rgba(255,255,255,0.3);
+  box-sizing: border-box;
+  outline: none;
+}
+
+.text-input::placeholder {
+  color: rgba(255,255,255,0.7);
+}
