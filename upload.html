@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload Photos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body id="bg">
+
+  <div class="card">
+    <h1 id="title"></h1>
+    <h2>Upload up to 20 photos</h2>
+
+    <input id="photos" type="file" accept="image/*" multiple>
+    <button onclick="upload()">Upload Photos</button>
+
+    <p id="status" style="color:white;"></p>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const cat = params.get("cat");
+    const name = localStorage.getItem("uploaderName") || "guest";
+
+    const bg = document.getElementById("bg");
+    const title = document.getElementById("title");
+
+    if (cat === "welcome") {
+      bg.style.backgroundImage = "url('bg-welcome.png')";
+      title.textContent = "Welcome Drinks";
+    } else if (cat === "wedding") {
+      bg.style.backgroundImage = "url('bg-wedding.png')";
+      title.textContent = "Wedding & Reception";
+    } else {
+      bg.style.backgroundImage = "url('bg-recovery.png')";
+      title.textContent = "Recovery Drinks";
+    }
+
+    async function upload() {
+      const files = document.getElementById("photos").files;
+      if (files.length === 0) return alert("Select at least one photo");
+      if (files.length > 20) return alert("Max 20 photos");
+
+      const form = new FormData();
+      form.append("name", name + "_" + cat);
+
+      for (const f of files) form.append("photos", f);
+
+      const res = await fetch("YOUR_WORKER_URL/upload", {
+        method: "POST",
+        body: form
+      });
+
+      document.getElementById("status").textContent =
+        res.ok ? "Upload complete!" : "Upload failed";
+    }
+  </script>
+
+</body>
+</html>
