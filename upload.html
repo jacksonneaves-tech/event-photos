@@ -11,7 +11,18 @@
     <h1 id="title"></h1>
     <h2>Upload up to 20 photos</h2>
 
-    <input id="photos" type="file" accept="image/*" multiple>
+    <!-- ⭐ REPLACE THIS ⭐ -->
+    <!-- <input id="photos" type="file" accept="image/*" multiple> -->
+
+    <!-- ⭐ WITH THIS (Step 2) ⭐ -->
+    <div class="file-picker">
+      Choose Photos
+      <input id="photos" type="file" accept="image/*" multiple>
+    </div>
+
+    <p id="file-label">No files selected</p>
+    <!-- ⭐ END OF INSERT ⭐ -->
+
     <button onclick="upload()">Upload Photos</button>
 
     <p id="status" style="color:white; margin-top:12px;"></p>
@@ -37,8 +48,22 @@
       title.textContent = "Recovery Drinks";
     }
 
+    // ⭐ Step 3 JS for updating the label ⭐
+    const photosInput = document.getElementById("photos");
+    const fileLabel = document.getElementById("file-label");
+
+    photosInput.addEventListener("change", () => {
+      if (photosInput.files.length === 0) {
+        fileLabel.textContent = "No files selected";
+      } else if (photosInput.files.length === 1) {
+        fileLabel.textContent = photosInput.files[0].name;
+      } else {
+        fileLabel.textContent = photosInput.files.length + " files selected";
+      }
+    });
+
     async function upload() {
-      const files = document.getElementById("photos").files;
+      const files = photosInput.files;
       if (files.length === 0) return alert("Select at least one photo");
       if (files.length > 20) return alert("Max 20 photos");
 
