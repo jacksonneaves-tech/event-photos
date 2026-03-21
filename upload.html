@@ -14,7 +14,7 @@
     <input id="photos" type="file" accept="image/*" multiple>
     <button onclick="upload()">Upload Photos</button>
 
-    <p id="status" style="color:white;"></p>
+    <p id="status" style="color:white; margin-top:12px;"></p>
   </div>
 
   <script>
@@ -25,6 +25,7 @@
     const bg = document.getElementById("bg");
     const title = document.getElementById("title");
 
+    // Set background + title based on category
     if (cat === "welcome") {
       bg.style.backgroundImage = "url('bg-welcome.png')";
       title.textContent = "Welcome Drinks";
@@ -46,8 +47,7 @@
 
       for (const f of files) form.append("photos", f);
 
-      const res = await fetch("https://super-base-a55bevent-photo-uploader.jackson-neaves.workers.dev
-/upload", {
+      const res = await fetch("https://super-base-a55bevent-photo-uploader.jackson-neaves.workers.dev/upload", {
         method: "POST",
         body: form
       });
