@@ -14,7 +14,26 @@
     <a class="btn" href="upload.html?cat=welcome">Welcome Drinks</a>
     <a class="btn" href="upload.html?cat=wedding">Wedding & Reception</a>
     <a class="btn" href="upload.html?cat=recovery">Recovery Drinks</a>
+
+    <!-- This empty div is where the Gallery button will appear -->
+    <div id="specialButtons"></div>
   </div>
+
+  <!-- ADD THIS SCRIPT BLOCK -->
+  <script>
+    // Get the normalised uploader name
+    const uploader = localStorage.getItem("uploaderName");
+
+    // Check for special user
+    const isSarahRak = uploader === "sarah-rak";
+
+    // If special user, inject the Gallery button
+    if (isSarahRak) {
+      document.getElementById("specialButtons").innerHTML = `
+        <a class="btn" href="gallery.html">Gallery</a>
+      `;
+    }
+  </script>
 
 </body>
 </html>
