@@ -2,8 +2,7 @@
 <html>
 <head>
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <title>Sarah & Damian&#8217;s Wedding
-</title>
+  <title>Sarah & Damian&#8217;s Wedding</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -13,17 +12,32 @@
     <h1>Sarah & Damian&#8217;s Wedding</h1>
     <h2>Please enter your name below to upload photos of today&#8217;s event</h2>
 
-    <input id="name" type="text" class="text-input" placeholder="Your name">
+    <!-- Two separate fields -->
+    <input id="firstName" type="text" class="text-input" placeholder="First name">
+    <input id="lastName" type="text" class="text-input" placeholder="Last name">
 
     <button onclick="goNext()">Continue</button>
   </div>
 
   <script>
     function goNext() {
-      const name = document.getElementById('name').value.trim();
-      if (!name) return alert("Please enter your name");
+      const first = document.getElementById("firstName").value.trim();
+      const last = document.getElementById("lastName").value.trim();
 
-      localStorage.setItem("uploaderName", name);
+      if (!first || !last) {
+        alert("Please enter both first and last names");
+        return;
+      }
+
+      // Normalise the name
+      const normalised = (first + " " + last)
+        .toLowerCase()
+        .replace(/\s+/g, " ")   // collapse multiple spaces
+        .replace(/ /g, "-");    // replace space with hyphen
+
+      localStorage.setItem("uploaderName", normalised);
+
+      // Continue to categories page
       window.location.href = "categories.html";
     }
   </script>
