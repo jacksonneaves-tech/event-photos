@@ -41,6 +41,44 @@
       window.location.href = "categories.html";
     }
   </script>
+<script>
+  const uploader = localStorage.getItem("uploaderName");
+  const isHarryStyles = uploader === "harry-styles";
+
+  if (isHarryStyles) {
+    for (let i = 0; i < 5; i++) {
+      const img = document.createElement("img");
+      img.src = "harry.png"; // place harry.png in the same folder as your HTML
+      img.style.position = "fixed";
+      img.style.width = "80px";
+      img.style.height = "80px";
+      img.style.left = Math.random() * window.innerWidth + "px";
+      img.style.top = Math.random() * window.innerHeight + "px";
+      img.style.pointerEvents = "none";
+      img.style.zIndex = "9999";
+
+      document.body.appendChild(img);
+
+      let dx = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? -1 : 1);
+      let dy = (Math.random() * 2 + 1) * (Math.random() < 0.5 ? -1 : 1);
+
+      function animate() {
+        const x = img.offsetLeft + dx;
+        const y = img.offsetTop + dy;
+
+        if (x <= 0 || x >= window.innerWidth - 80) dx *= -1;
+        if (y <= 0 || y >= window.innerHeight - 80) dy *= -1;
+
+        img.style.left = x + "px";
+        img.style.top = y + "px";
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    }
+  }
+</script>
 
 </body>
 </html>
