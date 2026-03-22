@@ -43,6 +43,11 @@
   <div class="card">
     <h1>Gallery</h1>
     <h2>Photos uploaded so far</h2>
+<div class="filter-buttons">
+  <button class="btn" data-filter="welcome">Welcome Drinks</button>
+  <button class="btn" data-filter="wedding">Ceremony & Reception</button>
+  <button class="btn" data-filter="recovery">Recovery Drinks</button>
+</div>
 
     <div id="gallery" class="grid"></div>
 
@@ -53,34 +58,46 @@
     <img id="fullImg">
   </div>
 
-  <script>
-    const uploader = localStorage.getItem("uploaderName");
+ <script>
+let allPhotos = [];
 
-    async function loadImages() {
-      const res = await fetch("https://super-base-a55bevent-photo-uploader.jackson-neaves.workers.dev/list");
-      const files = await res.json();
+async function loadPhotos() {
+  const res = await fetch("https://super-base-a55bevent-photo-uploader.jackson-neaves.workers.dev/list");
+  allPhotos = await res.json();
+  renderPhotos(allPhotos);
+}
 
-      const gallery = document.getElementById("gallery");
+function renderPhotos(list) {
+  const container = document.getElementById('gallery');
+  container.innerHTML = '';
 
-      files.forEach(file => {
-        const img = document.createElement("img");
-        img.src = file.url;
-        img.onclick = () => openFull(file.url);
-        gallery.appendChild(img);
-      });
-    }
+  list.forEach(photo => {
+    const img = document.createElement('img');
+    img.src = photo.url;
+    img.onclick = () => openFull(photo.url);
+    container.appendChild(img);
+  });
+}
 
-    function openFull(url) {
-      document.getElementById("fullImg").src = url;
-      document.getElementById("fullView").style.display = "flex";
-    }
+document.querySelectorAll('.filter-buttons .btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const prefix = btn.dataset.filter + '/';
+    const filtered = allPhotos.filter(p => p.key.startsWith(prefix));
+    renderPhotos(filtered);
+  });
+});
 
-    async function downloadAll() {
-      window.location.href = "https://super-base-a55bevent-photo-uploader.jackson-neaves.workers.dev/download-all";
-    }
+function openFull(url) {
+  document.getElementById("fullImg").src = url;
+  document.getElementById("fullView").style.display = "flex";
+}
 
-    loadImages();
-  </script>
+function downloadAll() {
+  window.location.href = "https://super-base-a55bevent-photo-uploader.jackson-neaves.workers.dev/download-all";
+}
+
+loadPhotos();
+</script>
 
 </body>
 </html>
