@@ -64,7 +64,7 @@ let allPhotos = [];
 async function loadPhotos() {
   const res = await fetch("https://super-base-a55bevent-photo-uploader.jackson-neaves.workers.dev/list");
   allPhotos = await res.json();
-  renderPhotos(allPhotos);
+  // Do NOT render here — wait for a filter click
 }
 
 function renderPhotos(list) {
