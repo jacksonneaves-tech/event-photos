@@ -58,7 +58,7 @@
     <img id="fullImg">
   </div>
 
- <script>
+<script>
 let allPhotos = [];
 
 async function loadPhotos() {
@@ -81,8 +81,8 @@ function renderPhotos(list) {
 
 document.querySelectorAll('.filter-buttons .btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    const prefix = btn.dataset.filter + '/';
-    const filtered = allPhotos.filter(p => p.key.startsWith(prefix));
+    const suffix = '_' + btn.dataset.filter + '/';
+    const filtered = allPhotos.filter(p => p.key.includes(suffix));
     renderPhotos(filtered);
   });
 });
@@ -98,6 +98,7 @@ function downloadAll() {
 
 loadPhotos();
 </script>
+
 
 </body>
 </html>
