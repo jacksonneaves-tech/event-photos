@@ -5,7 +5,7 @@
   <link rel="stylesheet" href="style.css">
   <title>Gallery</title>
 
-  <!-- JSZip + FileSaver for client-side ZIP creation -->
+  <!-- JSZip + FileSaver -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
@@ -39,6 +39,46 @@
       max-height: 100%;
       border-radius: 12px;
     }
+
+    /* Progress overlay */
+    #progressOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: white;
+      font-family: Inter, sans-serif;
+      z-index: 9999;
+    }
+
+    #progressBox {
+      background: rgba(255,255,255,0.12);
+      padding: 24px 32px;
+      border-radius: 16px;
+      backdrop-filter: blur(12px);
+      text-align: center;
+      width: 260px;
+    }
+
+    #progressBar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 6px;
+      margin-top: 12px;
+      overflow: hidden;
+    }
+
+    #progressFill {
+      height: 100%;
+      width: 0%;
+      background: #4fd1c5;
+      border-radius: 6px;
+      transition: width 0.15s ease-out;
+    }
   </style>
 </head>
 
@@ -63,10 +103,18 @@
     <img id="fullImg">
   </div>
 
+  <!-- Progress UI -->
+  <div id="progressOverlay">
+    <div id="progressBox">
+      <div id="progressText">Preparing...</div>
+      <div id="progressBar"><div id="progressFill"></div></div>
+    </div>
+  </div>
+
 <script>
 let allPhotos = [];
 
-// Load all photos from Worker
+// Load all photos
 async function loadPhotos() {
   const res = await fetch("https://super-base-a55bevent-photo-uploader.jackson-neaves.workers.dev/list");
   allPhotos = await res.json();
@@ -100,34 +148,49 @@ function openFull(url) {
   document.getElementById("fullView").style.display = "flex";
 }
 
-// NEW: Browser-side ZIP download
+// NEW: Browser-side ZIP with progress + subfolders
 async function downloadAll() {
-  try {
-    if (!allPhotos.length) {
-      alert("No photos found.");
-      return;
-    }
-
-    const zip = new JSZip();
-
-    // Download each image and add to ZIP
-    await Promise.all(
-      allPhotos.map(async (file) => {
-        const response = await fetch(file.url);
-        const blob = await response.blob();
-        const filename = file.key.split("/").pop();
-        zip.file(filename, blob);
-      })
-    );
-
-    // Generate ZIP and trigger download
-    const content = await zip.generateAsync({ type: "blob" });
-    saveAs(content, "all-photos.zip");
-
-  } catch (err) {
-    console.error("ZIP error:", err);
-    alert("Something went wrong while creating the ZIP.");
+  if (!allPhotos.length) {
+    alert("No photos found.");
+    return;
   }
+
+  const overlay = document.getElementById("progressOverlay");
+  const text = document.getElementById("progressText");
+  const fill = document.getElementById("progressFill");
+
+  overlay.style.display = "flex";
+
+  const zip = new JSZip();
+  const total = allPhotos.length;
+  let count = 0;
+
+  await Promise.all(
+    allPhotos.map(async (file) => {
+      const response = await fetch(file.url);
+      const blob = await response.blob();
+
+      // Extract event folder from key
+      // Example key: "brooke-davis_wedding/12345-IMG.jpg"
+      const folderName = file.key.split("_")[1].split("/")[0]; // "wedding"
+      const filename = file.key.split("/").pop();
+
+      // Add to subfolder
+      zip.folder(folderName).file(filename, blob);
+
+      // Update progress
+      count++;
+      text.textContent = `Downloading ${count} of ${total}`;
+      fill.style.width = `${(count / total) * 100}%`;
+    })
+  );
+
+  text.textContent = "Creating ZIP...";
+
+  const content = await zip.generateAsync({ type: "blob" });
+
+  overlay.style.display = "none";
+  saveAs(content, "all-photos.zip");
 }
 
 loadPhotos();
