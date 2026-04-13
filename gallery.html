@@ -165,20 +165,28 @@ async function downloadAll() {
   const total = allPhotos.length;
   let count = 0;
 
+  // Track numbering per uploader+event
+  const counters = {};
+
   await Promise.all(
     allPhotos.map(async (file) => {
       const response = await fetch(file.url);
       const blob = await response.blob();
 
-      // Extract event folder from key
-      // Example key: "brooke-davis_wedding/12345-IMG.jpg"
-      const folderName = file.key.split("_")[1].split("/")[0]; // "wedding"
-      const filename = file.key.split("/").pop();
+      // Example key: "brooke-davis_wedding/1775893198584-vid7qt-IMG_0850.jpeg"
+      const [uploader, eventAndRest] = file.key.split("_");
+      const event = eventAndRest.split("/")[0];
 
-      // Add to subfolder
-      zip.folder(folderName).file(filename, blob);
+      const counterKey = `${uploader}-${event}`;
+      counters[counterKey] = (counters[counterKey] || 0) + 1;
 
-      // Update progress
+      const index = String(counters[counterKey]).padStart(3, "0");
+      const ext = file.key.split(".").pop();
+
+      const newName = `${uploader}-${event}-${index}.${ext}`;
+
+      zip.folder(event).file(newName, blob);
+
       count++;
       text.textContent = `Downloading ${count} of ${total}`;
       fill.style.width = `${(count / total) * 100}%`;
