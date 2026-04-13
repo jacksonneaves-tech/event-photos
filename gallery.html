@@ -22,6 +22,8 @@
       border-radius: 12px;
       cursor: pointer;
       object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.35s ease;
     }
 
     .full {
@@ -120,17 +122,38 @@ async function loadPhotos() {
   allPhotos = await res.json();
 }
 
-// Render filtered photos
-function renderPhotos(list) {
+// ⭐ NEW: Smooth batch-loading (4 at a time)
+async function renderPhotos(list) {
   const container = document.getElementById('gallery');
   container.innerHTML = '';
 
-  list.forEach(photo => {
-    const img = document.createElement('img');
-    img.src = photo.url;
-    img.onclick = () => openFull(photo.url);
-    container.appendChild(img);
-  });
+  const batchSize = 4;
+  let index = 0;
+
+  while (index < list.length) {
+    const batch = list.slice(index, index + batchSize);
+
+    await Promise.all(
+      batch.map(photo => {
+        return new Promise(resolve => {
+          const img = document.createElement('img');
+          img.loading = "lazy";
+          img.style.opacity = "0";
+
+          img.onload = () => {
+            img.style.opacity = "1";
+            resolve();
+          };
+
+          img.src = photo.url;
+          img.onclick = () => openFull(photo.url);
+          container.appendChild(img);
+        });
+      })
+    );
+
+    index += batchSize;
+  }
 }
 
 // Filter buttons
@@ -148,7 +171,7 @@ function openFull(url) {
   document.getElementById("fullView").style.display = "flex";
 }
 
-// NEW: Browser-side ZIP with progress + subfolders
+// ZIP download (unchanged)
 async function downloadAll() {
   if (!allPhotos.length) {
     alert("No photos found.");
@@ -165,7 +188,6 @@ async function downloadAll() {
   const total = allPhotos.length;
   let count = 0;
 
-  // Track numbering per uploader+event
   const counters = {};
 
   await Promise.all(
@@ -173,7 +195,6 @@ async function downloadAll() {
       const response = await fetch(file.url);
       const blob = await response.blob();
 
-      // Example key: "brooke-davis_wedding/1775893198584-vid7qt-IMG_0850.jpeg"
       const [uploader, eventAndRest] = file.key.split("_");
       const event = eventAndRest.split("/")[0];
 
